@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -24,13 +25,14 @@ type Viacep struct {
 	Siafi       string `json:"siafi"`
 }
 
-func ReqViaCep(cep string) []byte {
+func ReqViaCep(ctx context.Context, cep string) []byte {
+
 	var data Viacep
-	err := utils.FetchAndUnmarshal("https://viacep.com.br/ws/"+cep+"/json/", &data)
+	err := utils.FetchAndUnmarshal(ctx, "https://viacep.com.br/ws/"+cep+"/json/", &data)
 	if err != nil {
 		return nil
 	}
-	jsonResult, err := json.Marshal(data)
+	jsonResult, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in marshal this cep: %v\n", err)
 		return nil

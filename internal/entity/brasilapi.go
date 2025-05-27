@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -17,15 +18,15 @@ type BrasilApi struct {
 	Service      string `json:"service"`
 }
 
-func ReqBrasilapi(cep string) []byte {
+func ReqBrasilapi(ctx context.Context, cep string) []byte {
 	var data BrasilApi
-	err := utils.FetchAndUnmarshal("https://brasilapi.com.br/api/cep/v1/"+cep, &data)
+	err := utils.FetchAndUnmarshal(ctx, "https://brasilapi.com.br/api/cep/v1/"+cep, &data)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in search this cep: %v\n", err)
 		return nil
 	}
 
-	jsonReult, err := json.Marshal(data)
+	jsonReult, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error in marshal this cep: %v\n", err)
 		return nil
